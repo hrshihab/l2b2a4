@@ -3,7 +3,7 @@
     "browser": true,
     "es2021": true
   },
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -16,5 +16,7 @@
     "prefer-const": "error",
     "no-console": "warn",
     "no-undef": "error"
+  },"globals": {
+    "process": "readonly"
   }
 }
