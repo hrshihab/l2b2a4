@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { TCourse } from './course.interface'
 import Course from './course.model'
+import { Review } from '../review/review.model'
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const session = await mongoose.startSession()
@@ -116,7 +117,42 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   return response
 }
 
+const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+  const { details, ...rest } = payload
+  const modifiedData: Record<string, unknown> = { ...rest }
+
+  if (details && Object.keys(details).length) {
+    for (const [key, value] of Object.entries(details)) {
+      modifiedData[`details.${key}`] = value
+    }
+  }
+  console.log(id, modifiedData)
+
+  const result = await Course.findOneAndUpdate({ _id: id }, modifiedData, {
+    new: true,
+    runValidators: true,
+  })
+  return result
+}
+
+const getCourseWithReviewsIntoDB = async (id: string) => {
+  //console.log(id)
+
+  const data = await Course.findById(id)
+  if (!data) {
+    throw new Error('Course not found')
+  }
+  const reviews = await Review.find({ courseId: id }).select('-__v')
+
+  return {
+    data,
+    reviews,
+  }
+}
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCourseFromDB,
+  updateCourseIntoDB,
+  getCourseWithReviewsIntoDB,
 }

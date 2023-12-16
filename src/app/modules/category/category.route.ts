@@ -1,4 +1,3 @@
-import { Category } from './category.model'
 import express from 'express'
 import validateRequest from '../../middlewares/validateRequest'
 import { CategoryValidation } from './category.validation'

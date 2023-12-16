@@ -11,5 +11,11 @@ router.post(
 )
 
 router.get('/courses', CourseControllers.getAllCourses)
+router.put(
+  '/courses/:courseId',
+  validateRequest(CourseValidation.UpdateCourseValidationSchema),
+  CourseControllers.updateCourse,
+)
+router.get('/courses/:courseId/reviews', CourseControllers.getCourseWithReview)
 
 export const CourseRoutes = router
