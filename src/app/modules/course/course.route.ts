@@ -10,4 +10,6 @@ router.post(
   CourseControllers.createCourse,
 )
 
+router.get('/courses', CourseControllers.getAllCourses)
+
 export const CourseRoutes = router
