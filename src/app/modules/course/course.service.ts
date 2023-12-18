@@ -118,20 +118,52 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 }
 
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
-  const { details, ...rest } = payload
+  const { details, tags, ...rest } = payload
   const modifiedData: Record<string, unknown> = { ...rest }
 
+  // Handle updating 'details' if provided
   if (details && Object.keys(details).length) {
-    for (const [key, value] of Object.entries(details)) {
-      modifiedData[`details.${key}`] = value
-    }
+    modifiedData.details = { ...modifiedData.details, ...details }
   }
+
+  // Handle updating 'tags' if provided
+  if (tags && Array.isArray(tags)) {
+    // Fetch existing tags from the database
+    const existingCourse = await Course.findById(id)
+    const existingTags: any[] = existingCourse?.tags || []
+
+    // Compare new tags with existing tags
+    const updatedTags = existingTags.map((existingTag) => {
+      const newTag = tags.find((tag) => tag.name === existingTag.name)
+
+      // If the tag exists in the new data, update 'isDeleted'
+      if (newTag) {
+        existingTag.isDeleted = newTag.isDeleted
+      }
+
+      return existingTag
+    })
+
+    // Add new tags that don't exist in the current data
+    tags.forEach((newTag) => {
+      if (
+        !updatedTags.some((existingTag) => existingTag.name === newTag.name)
+      ) {
+        updatedTags.push(newTag)
+      }
+    })
+
+    // Update 'tags' in modifiedData
+    modifiedData.tags = updatedTags
+  }
+
   console.log(id, modifiedData)
 
   const result = await Course.findOneAndUpdate({ _id: id }, modifiedData, {
     new: true,
     runValidators: true,
   })
+
   return result
 }
 

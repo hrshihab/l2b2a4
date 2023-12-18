@@ -15,7 +15,7 @@ const moduleRoutes = [
     route: CategoryRoutes,
   },
   {
-    path: '/reviews',
+    path: '/',
     route: ReviewRoutes,
   },
 ]

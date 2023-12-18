@@ -63,7 +63,7 @@ const UpdateCourseValidationSchema = z.object({
     language: z.string().min(1).optional(),
     provider: z.string().min(1).optional(),
     durationInWeeks: z.number().optional().optional(),
-    details: DetailsSchema,
+    details: DetailsSchema.optional(),
   }),
 })
 

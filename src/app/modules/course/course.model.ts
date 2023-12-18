@@ -91,6 +91,19 @@ courseSchema.pre('save', function (next) {
   next()
 })
 
+courseSchema.pre('find', function (next) {
+  this.find({ 'tags.isDeleted': { $ne: true } })
+  next()
+})
+courseSchema.pre('findOne', function (next) {
+  this.find({ 'tags.isDeleted': { $ne: true } })
+  next()
+})
+courseSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { 'tags.isDeleted': { $ne: true } } })
+  next()
+})
+
 const Course = model<TCourse, courseModel>('Course', courseSchema)
 
 export default Course

@@ -22,6 +22,17 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+const getBestCourse = catchAsync(async (req: Request, res: Response) => {
+  const result = await ReviewServices.getBestCourseFromDB()
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Best course retrieved successfully',
+    data: result,
+  })
+})
+
 export const ReviewControllers = {
   createReview,
+  getBestCourse,
 }
