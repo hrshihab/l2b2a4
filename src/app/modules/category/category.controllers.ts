@@ -9,7 +9,7 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
   //console.log(req.body)
   const result = await CategoryServices.createCategoryIntoDB(req.body)
   sendResponse(res, {
-    statusCode: httpStatus.OK,
+    statusCode: 201,
     success: true,
     message: 'Category is created successfully',
     data: result,

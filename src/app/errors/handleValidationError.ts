@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 
 const handleValidationError = (error: ZodError) => {
   const statusCode = 400
-  const errorMessage = 'Validation Error'
+  const errorDefaultMessage = 'Validation Error'
   const errorDetails = {
     issues: error.errors.map((err: ZodIssue) => ({
       expected: err.expected,
@@ -15,10 +15,16 @@ const handleValidationError = (error: ZodError) => {
     name: error.constructor.name,
   }
 
+  const errorMessage = error.errors
+    .map((err) => {
+      const lastElement = err.path[err.path.length - 1]
+      return `${lastElement} is required.`
+    })
+    .join(' ')
   return {
     statusCode,
-    message: errorMessage,
-    errorMessage: error.errors.map((err) => err.message).join('. '),
+    message: errorDefaultMessage,
+    errorMessage,
     errorDetails,
   }
 }

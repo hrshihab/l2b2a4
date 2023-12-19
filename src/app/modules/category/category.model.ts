@@ -10,14 +10,14 @@ const categorySchema = new Schema<TCategory>({
   },
 })
 
-categorySchema.pre('save', async function (next) {
-  const isCategoryExists = await Category.findOne({
-    name: this.name,
-  })
-  if (isCategoryExists) {
-    throw new Error('Category is already exists')
-  }
-  next()
-})
+// categorySchema.pre('save', async function (next) {
+//   const isCategoryExists = await Category.findOne({
+//     name: this.name,
+//   })
+//   if (isCategoryExists) {
+//     throw new Error('Category is already exists')
+//   }
+//   next()
+// })
 
 export const Category = model<TCategory>('Category', categorySchema)

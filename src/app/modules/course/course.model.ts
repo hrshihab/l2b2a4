@@ -36,8 +36,8 @@ const Details = new Schema<TDetails>(
 const courseSchema = new Schema<TCourse, courseModel>({
   title: {
     type: String,
+
     required: [true, 'Title is required'],
-    unique: true,
     trim: true,
   },
   instructor: {
@@ -91,18 +91,25 @@ courseSchema.pre('save', function (next) {
   next()
 })
 
-courseSchema.pre('find', function (next) {
-  this.find({ 'tags.isDeleted': { $ne: true } })
-  next()
-})
+// courseSchema.pre('find', function (next) {
+//   // Exclude tags where isDeleted: true
+//   this.find({ tags: { $not: { $elemMatch: { isDeleted: true } } } })
+//   next()
+// })
+
 courseSchema.pre('findOne', function (next) {
-  this.find({ 'tags.isDeleted': { $ne: true } })
+  // Exclude tags where isDeleted: true
+  this.find({ tags: { $not: { $elemMatch: { isDeleted: true } } } })
   next()
 })
-courseSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { 'tags.isDeleted': { $ne: true } } })
-  next()
-})
+
+// courseSchema.pre('aggregate', function (next) {
+//   // Exclude tags where isDeleted: true
+//   this.pipeline().unshift({
+//     $match: { tags: { $not: { $elemMatch: { isDeleted: true } } } },
+//   })
+//   next()
+// })
 
 const Course = model<TCourse, courseModel>('Course', courseSchema)
 
