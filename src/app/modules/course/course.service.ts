@@ -146,15 +146,23 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { details, tags, startDate, endDate, ...rest } = payload
   const modifiedData: Partial<TCourse> = { ...rest }
 
-  // Handle updating 'details' if provided
-  if (details && Object.keys(details).length) {
-    modifiedData.details = { ...modifiedData.details, ...details }
+  const existingData = await Course.findById(id)
+  //console.log(existingData)
+  if (!existingData) {
+    throw new Error('Course not found')
+  }
+  if (details && (details.level || details.description)) {
+    modifiedData.details = {
+      level: details.level || existingData.details.level,
+      description: details.description || existingData.details.description,
+    }
+    console.log(modifiedData)
   }
 
   // Handle updating 'tags' if provided
   if (tags && Array.isArray(tags)) {
     // Fetch existing tags from the database
-    const existingCourse = await Course.findById(id)
+    const existingCourse = existingData
     const existingTags: any[] = existingCourse?.tags || []
 
     // Remove tags marked for deletion from the database

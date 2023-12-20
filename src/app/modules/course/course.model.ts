@@ -27,7 +27,6 @@ const Details = new Schema<TDetails>(
     },
     description: {
       type: String,
-      required: [true, 'Description required'],
     },
   },
   { _id: false },
