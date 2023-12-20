@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express'
+import express, { Application } from 'express'
 import cors from 'cors'
 import router from './app/routes'
 import globalErrorHandler from './app/middlewares/globalErrorhandler'
@@ -10,13 +10,12 @@ app.use(express.json())
 app.use(cors())
 
 //application route
+app.get('/', (req, res) => {
+  res.send('Hello Assignment 3!')
+})
 
 app.use('/api', router)
-
 app.use(globalErrorHandler)
 app.use(notFound)
-app.get('/', (req: Request, res: Response) => {
-  res.send('Server is running')
-})
 
 export default app

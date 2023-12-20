@@ -57,13 +57,13 @@ const UpdateCourseValidationSchema = z.object({
     instructor: z.string().optional(),
     categoryId: z.string().optional(),
     price: z.number().optional(),
-    tags: z.array(TagsValidation).optional(),
+    tags: z.array(UpdateTagsValidation).optional(),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
     language: z.string().min(1).optional(),
     provider: z.string().min(1).optional(),
     durationInWeeks: z.number().optional().optional(),
-    details: DetailsSchema.optional(),
+    details: UpdateDetailsSchema.optional(),
   }),
 })
 

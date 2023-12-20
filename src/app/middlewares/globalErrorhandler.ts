@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ErrorRequestHandler } from 'express'
 import { ZodError } from 'zod'
 import handleValidationError from '../errors/handleValidationError'
@@ -9,7 +11,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let message = 'something went wrong'
   let errorMessage = ''
   let errorDetails = {}
-  console.log(err)
 
   if (err instanceof ZodError) {
     const simplifierError = handleValidationError(err)

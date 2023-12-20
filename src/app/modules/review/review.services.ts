@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TReview } from './review.interface'
 import { Review } from './review.model'
 

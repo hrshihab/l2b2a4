@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose'
 import { TCourse } from './course.interface'
 import Course from './course.model'
@@ -31,7 +32,7 @@ const createCourseIntoDB = async (payload: TCourse) => {
 }
 
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
-  console.log('Received query:', query)
+  //console.log('Received query:', query)
   const {
     page = 1,
     limit = 10,
@@ -106,7 +107,7 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
     filter['details.level'] = level
   }
 
-  console.log('Constructed filter:', filter)
+  //console.log('Constructed filter:', filter)
 
   // Build sort object
   const sort: any = {}
@@ -114,8 +115,8 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   if (sortBy && sortOrder) {
     sort[sortBy as string] = sortOrder === 'desc' ? -1 : 1
   }
-  const allCourses = await Course.find(filter).sort(sort)
-  console.log('All courses:', allCourses)
+  // const allCourses = await Course.find(filter).sort(sort)
+  //console.log('All courses:', allCourses)
 
   // Query MongoDB
   const courses = await Course.find(filter)
@@ -143,7 +144,7 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 }
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { details, tags, startDate, endDate, ...rest } = payload
-  const modifiedData: Record<string, unknown> = { ...rest }
+  const modifiedData: Partial<TCourse> = { ...rest }
 
   // Handle updating 'details' if provided
   if (details && Object.keys(details).length) {
@@ -206,7 +207,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     modifiedData.durationInWeeks = durationInWeeks
   }
 
-  console.log(id, modifiedData)
+  //console.log(id, modifiedData)
 
   const result = await Course.findOneAndUpdate({ _id: id }, modifiedData, {
     new: true,
@@ -217,8 +218,6 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
 }
 
 const getCourseWithReviewsIntoDB = async (id: string) => {
-  console.log(`Fetching course with ID: ${id}`)
-
   // Find the course by ID
   const data = await Course.findById(id)
 
@@ -227,12 +226,12 @@ const getCourseWithReviewsIntoDB = async (id: string) => {
     throw new Error('Course not found')
   }
 
-  console.log('Course:', data)
+  //console.log('Course:', data)
 
   // Find reviews for the course
   const reviews = await Review.find({ courseId: id }).select('-__v')
 
-  console.log('Reviews:', reviews)
+  //console.log('Reviews:', reviews)
 
   return {
     data,

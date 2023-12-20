@@ -1,4 +1,3 @@
-import { Category } from './category.model'
 import { Request, Response } from 'express'
 import { CategoryServices } from './category.services'
 import sendResponse from '../../utils/sendResponse'
