@@ -35,8 +35,8 @@ const Details = new Schema<TDetails>(
 const courseSchema = new Schema<TCourse, courseModel>({
   title: {
     type: String,
-
     required: [true, 'Title is required'],
+    unique: true,
     trim: true,
   },
   instructor: {

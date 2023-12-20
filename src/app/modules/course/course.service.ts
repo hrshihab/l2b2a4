@@ -156,7 +156,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
       level: details.level || existingData.details.level,
       description: details.description || existingData.details.description,
     }
-    console.log(modifiedData)
+    //console.log(modifiedData)
   }
 
   // Handle updating 'tags' if provided
