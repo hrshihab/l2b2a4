@@ -35,7 +35,7 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   //console.log('Received query:', query)
   const {
     page = 1,
-    limit = 10,
+    limit = 20,
     sortBy,
     sortOrder,
     minPrice,
