@@ -153,11 +153,24 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   }
   if (details && (details.level || details.description)) {
     modifiedData.details = {
-      level: details.level || existingData.details.level,
-      description: details.description || existingData.details.description,
+      level: details?.level || existingData.details.level,
+      description: details?.description || existingData.details.description,
     }
     //console.log(modifiedData)
   }
+  // // Handle updating 'details' if provided
+  // if (details) {
+  //   modifiedData.details = {
+  //     level:
+  //       details.level !== undefined
+  //         ? details.level
+  //         : existingData.details.level,
+  //     description:
+  //       details.description !== undefined
+  //         ? details.description
+  //         : existingData.details.description,
+  //   }
+  // }
 
   // Handle updating 'tags' if provided
   if (tags && Array.isArray(tags)) {

@@ -75,7 +75,6 @@ const courseSchema = new Schema<TCourse, courseModel>({
   },
   details: {
     type: Details,
-    required: [true, 'Details required'],
   },
 })
 

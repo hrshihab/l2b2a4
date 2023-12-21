@@ -12,8 +12,8 @@ const TagsValidation = z.object({
 })
 
 const DetailsSchema = z.object({
-  level: z.enum(['Beginner', 'Intermediate', 'Advanced']),
-  description: z.string().min(1),
+  level: z.enum(['Beginner', 'Intermediate', 'Advanced']).optional(),
+  description: z.string().min(1).optional(),
 })
 
 const createCourseValidationSchema = z.object({
