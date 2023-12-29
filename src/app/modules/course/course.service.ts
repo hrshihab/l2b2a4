@@ -15,13 +15,15 @@ const createCourseIntoDB = async (payload: TCourse) => {
     payload.tags = filteredTags
 
     const newCourse = await Course.create([payload], { session })
-
     if (!newCourse.length) {
       throw new Error('Failed to create new Course')
     }
 
     await session.commitTransaction()
     await session.endSession()
+    // const populatedCourse = await Course.findById(newCourse._id).populate(
+    //   'createdBy',
+    // )
 
     return newCourse
   } catch (error: any) {

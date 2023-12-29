@@ -5,12 +5,15 @@ import { ZodError } from 'zod'
 import handleValidationError from '../errors/handleValidationError'
 import handleCastError from '../errors/handleCastError'
 import handleDuplicateError from '../errors/handleDuplicateError'
+import AppError from '../errors/appError'
+import UnauthorizedError from '../errors/unAuthorizedError'
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let statusCode = 500
   let message = 'something went wrong'
-  let errorMessage = ''
-  let errorDetails = {}
+  let errorMessage
+  let errorDetails
+  let stack
 
   if (err instanceof ZodError) {
     const simplifierError = handleValidationError(err)
@@ -33,13 +36,25 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = simplifierError?.message
     errorMessage = simplifierError?.errorMessage
     errorDetails = simplifierError?.errorDetails
-  } else if (err instanceof Error) {
+  } else if (err instanceof AppError) {
+    statusCode = err?.statusCode
     errorMessage = err.message
-    // Extract relevant details for generic errors
     errorDetails = {
       name: err.name,
       stack: err.stack,
     }
+  } else if (err instanceof UnauthorizedError) {
+    return res.status(statusCode).json({
+      success: false,
+      message: 'Unauthorized Access',
+      errorMessage: err.message,
+      errorDetails: null,
+      stack: null,
+    })
+  } else if (err instanceof Error) {
+    errorMessage = err.message
+    // Extract relevant details for generic errors
+    errorDetails = {}
   }
 
   return res.status(statusCode).json({

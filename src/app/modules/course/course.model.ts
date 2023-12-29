@@ -70,6 +70,10 @@ const courseSchema = new Schema<TCourse, courseModel>({
     type: String,
     required: [true, 'Provider Name is required'],
   },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
   durationInWeeks: {
     type: Number,
   },
