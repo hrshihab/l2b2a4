@@ -5,7 +5,10 @@ import catchAsync from '../../utils/catchAsync'
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
   // console.log(req.body)
-  const allData = await ReviewServices.createReviewIntoDB(req.body)
+  const allData = await ReviewServices.createReviewIntoDB(
+    req.body,
+    req.user.username,
+  )
 
   sendResponse(res, {
     statusCode: 201,

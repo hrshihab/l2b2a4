@@ -32,55 +32,60 @@ const Details = new Schema<TDetails>(
   { _id: false },
 )
 
-const courseSchema = new Schema<TCourse, courseModel>({
-  title: {
-    type: String,
-    required: [true, 'Title is required'],
-    unique: true,
-    trim: true,
-  },
-  instructor: {
-    type: String,
-    required: [true, 'Instructor name is required'],
-  },
-  categoryId: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'CategoryId is required'],
-    ref: 'Category',
-  },
-  price: {
-    type: Number,
-    required: [true, 'Price must be mentioned'],
-  },
-  tags: [Tags],
-  startDate: {
-    type: String,
-    required: [true, 'StartDate must be required'],
-  },
+const courseSchema = new Schema<TCourse, courseModel>(
+  {
+    title: {
+      type: String,
+      required: [true, 'Title is required'],
+      unique: true,
+      trim: true,
+    },
+    instructor: {
+      type: String,
+      required: [true, 'Instructor name is required'],
+    },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'CategoryId is required'],
+      ref: 'Category',
+    },
+    price: {
+      type: Number,
+      required: [true, 'Price must be mentioned'],
+    },
+    tags: [Tags],
+    startDate: {
+      type: String,
+      required: [true, 'StartDate must be required'],
+    },
 
-  endDate: {
-    type: String,
-    required: [true, 'EndDate must be required'],
+    endDate: {
+      type: String,
+      required: [true, 'EndDate must be required'],
+    },
+    language: {
+      type: String,
+      required: [true, 'Language must be required'],
+    },
+    provider: {
+      type: String,
+      required: [true, 'Provider Name is required'],
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    durationInWeeks: {
+      type: Number,
+    },
+    details: {
+      type: Details,
+    },
   },
-  language: {
-    type: String,
-    required: [true, 'Language must be required'],
+  {
+    timestamps: true,
   },
-  provider: {
-    type: String,
-    required: [true, 'Provider Name is required'],
-  },
-  createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  durationInWeeks: {
-    type: Number,
-  },
-  details: {
-    type: Details,
-  },
-})
+)
 
 courseSchema.pre('save', function (next) {
   const start = new Date(this.startDate)

@@ -3,8 +3,11 @@ import mongoose from 'mongoose'
 import { TCourse } from './course.interface'
 import Course from './course.model'
 import { Review } from '../review/review.model'
+import { User } from '../user/user.model'
+import AppError from '../../errors/appError'
+import httpStatus from 'http-status'
 
-const createCourseIntoDB = async (payload: TCourse) => {
+const createCourseIntoDB = async (payload: TCourse, adminUserName: string) => {
   const session = await mongoose.startSession()
 
   try {
@@ -14,7 +17,16 @@ const createCourseIntoDB = async (payload: TCourse) => {
     const filteredTags = payload.tags.filter((tag) => !tag.isDeleted)
     payload.tags = filteredTags
 
-    const newCourse = await Course.create([payload], { session })
+    const admin = await User.findOne({ username: adminUserName, role: 'admin' })
+    if (!admin) {
+      throw new AppError(httpStatus.FORBIDDEN, 'Admin info not found !')
+    }
+    //console.log(admin)
+
+    const newCourse = await Course.create(
+      [{ ...payload, createdBy: admin._id }],
+      { session },
+    )
     if (!newCourse.length) {
       throw new Error('Failed to create new Course')
     }
@@ -122,6 +134,10 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 
   // Query MongoDB
   const courses = await Course.find(filter)
+    .populate({
+      path: 'createdBy',
+      select: '_id username email role',
+    })
     .sort(sort)
     .skip(skip)
     .limit(limitNumber)
@@ -144,15 +160,23 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 
   return response
 }
-const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+const updateCourseIntoDB = async (
+  id: string,
+  payload: Partial<TCourse>,
+  userName: string,
+) => {
   const { details, tags, startDate, endDate, ...rest } = payload
   const modifiedData: Partial<TCourse> = { ...rest }
-
+  const userData = await User.findOne({ username: userName })
+  if (!userData) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User Data is not found !')
+  }
   const existingData = await Course.findById(id)
   //console.log(existingData)
   if (!existingData) {
     throw new Error('Course not found')
   }
+
   if (details && (details.level || details.description)) {
     modifiedData.details = {
       level: details?.level || existingData.details.level,
@@ -235,6 +259,9 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const result = await Course.findOneAndUpdate({ _id: id }, modifiedData, {
     new: true,
     runValidators: true,
+  }).populate({
+    path: 'createdBy',
+    select: '_id username email role',
   })
 
   return result
@@ -242,7 +269,10 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
 
 const getCourseWithReviewsIntoDB = async (id: string) => {
   // Find the course by ID
-  const data = await Course.findById(id)
+  const data = await Course.findById(id).populate({
+    path: 'createdBy',
+    select: '_id username email role',
+  })
 
   // If course is not found, throw an error
   if (!data) {
@@ -252,7 +282,10 @@ const getCourseWithReviewsIntoDB = async (id: string) => {
   //console.log('Course:', data)
 
   // Find reviews for the course
-  const reviews = await Review.find({ courseId: id }).select('-__v')
+  const reviews = await Review.find({ courseId: id }).populate({
+    path: 'createdBy',
+    select: '_id username email role',
+  })
 
   //console.log('Reviews:', reviews)
 

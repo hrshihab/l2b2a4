@@ -5,8 +5,9 @@ import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await CourseServices.createCourseIntoDB(req.body)
-  //console.log(req.body)
+  const adminId = req.user.username
+  const result = await CourseServices.createCourseIntoDB(req.body, adminId)
+  //console.log(req.user)
 
   sendResponse(res, {
     statusCode: 201,
@@ -24,7 +25,11 @@ const getAllCourses = catchAsync(async (req, res) => {
 
 const updateCourse = catchAsync(async (req, res) => {
   const { courseId } = req.params
-  const result = await CourseServices.updateCourseIntoDB(courseId, req.body)
+  const result = await CourseServices.updateCourseIntoDB(
+    courseId,
+    req.body,
+    req.user.username,
+  )
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

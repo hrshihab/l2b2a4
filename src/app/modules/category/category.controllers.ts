@@ -6,7 +6,10 @@ import catchAsync from '../../utils/catchAsync'
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   //console.log(req.body)
-  const result = await CategoryServices.createCategoryIntoDB(req.body)
+  const result = await CategoryServices.createCategoryIntoDB(
+    req.body,
+    req.user.username,
+  )
   sendResponse(res, {
     statusCode: 201,
     success: true,

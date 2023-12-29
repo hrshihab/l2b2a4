@@ -2,13 +2,22 @@ import { Schema } from 'mongoose'
 import { TCategory } from './category.interface'
 import { model } from 'mongoose'
 
-const categorySchema = new Schema<TCategory>({
-  name: {
-    type: String,
-    unique: true,
-    required: [true, 'Category Name is required and Unique'],
+const categorySchema = new Schema<TCategory>(
+  {
+    name: {
+      type: String,
+      unique: true,
+      required: [true, 'Category Name is required and Unique'],
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
-})
+  {
+    timestamps: true,
+  },
+)
 
 // categorySchema.pre('save', async function (next) {
 //   const isCategoryExists = await Category.findOne({
