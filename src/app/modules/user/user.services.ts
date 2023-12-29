@@ -11,11 +11,14 @@ import { JwtPayload } from 'jsonwebtoken'
 const createUserIntoDB = async (payload: TUser) => {
   try {
     const user = await User.create(payload)
-    //console.log(user)
-    if (!Object.keys(user).length) {
+    // Fetch the user with selected fields
+    const filteredUser = await User.findOne({ _id: user._id })
+
+    if (!filteredUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user')
     }
-    return user
+
+    return filteredUser
   } catch (error: any) {
     throw new Error(error)
   }
