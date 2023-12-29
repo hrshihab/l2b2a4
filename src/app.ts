@@ -11,7 +11,7 @@ app.use(cors())
 
 //application route
 app.get('/', (req, res) => {
-  res.send('Hello Assignment 3!')
+  res.send('Hello Assignment 4!')
 })
 
 app.use('/api', router)
