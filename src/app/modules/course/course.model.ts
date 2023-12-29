@@ -45,7 +45,7 @@ const courseSchema = new Schema<TCourse, courseModel>(
       required: [true, 'Instructor name is required'],
     },
     categoryId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: [true, 'CategoryId is required'],
       ref: 'Category',
     },
