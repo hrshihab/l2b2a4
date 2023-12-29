@@ -2,7 +2,7 @@
 To run the application locally follow the instruction:
 
 *Live Server Link*
-## Prerequisites
+
 https://dark-puce-harp-seal-toga.cyclic.app/
 
 *Documentation Link*
@@ -22,6 +22,7 @@ Admin Login:
     "password": "123456"
 }
 
+## Prerequisites
 
 
 Make sure you have the following installed:
