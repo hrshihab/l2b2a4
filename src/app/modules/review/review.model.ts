@@ -4,7 +4,7 @@ import { TReview } from './review.interface'
 const createReviewSchema = new Schema<TReview>(
   {
     courseId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: [true, 'Course ID is required'],
       ref: 'Course',
     },

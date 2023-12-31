@@ -20,6 +20,7 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
 
 const getBestCourse = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewServices.getBestCourseFromDB()
+  //console.log(result, 'cont')
   sendResponse(res, {
     statusCode: 200,
     success: true,

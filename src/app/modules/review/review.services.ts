@@ -23,7 +23,7 @@ const getBestCourseFromDB = async () => {
   const aggregationPipeline: any = [
     {
       $group: {
-        _id: '$courseId',
+        _id: { $toObjectId: '$courseId' },
         averageRating: { $avg: '$rating' },
         reviewCount: { $sum: 1 },
       },
@@ -73,12 +73,14 @@ const getBestCourseFromDB = async () => {
   ]
 
   const result = await Review.aggregate(aggregationPipeline)
+  //console.log(result)
 
   // If you want to populate additional fields from 'courses' collection, specify the path and select options
   const populatedResult = await Review.populate(result, {
     path: 'createdBy', // Replace 'createdBy' with the actual path you want to populate
     select: '_id username email role', // Specify the fields to populate
   })
+  //console.log(populatedResult)
 
   return populatedResult[0]
 }
