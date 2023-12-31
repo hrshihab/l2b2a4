@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status'
 import AppError from '../../errors/appError'
 import { User } from '../user/user.model'
 import { TReview } from './review.interface'
 import { Review } from './review.model'
+import Course from '../course/course.model'
 
 const createReviewIntoDB = async (payload: TReview, userName: string) => {
   const userData = await User.findOne({ username: userName })
@@ -23,7 +25,7 @@ const getBestCourseFromDB = async () => {
   const aggregationPipeline: any = [
     {
       $group: {
-        _id: { $toObjectId: '$courseId' },
+        _id: '$courseId',
         averageRating: { $avg: '$rating' },
         reviewCount: { $sum: 1 },
       },
@@ -34,55 +36,49 @@ const getBestCourseFromDB = async () => {
     {
       $limit: 1,
     },
-    {
-      $lookup: {
-        from: 'courses',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'courseData',
-      },
-    },
-    {
-      $unwind: '$courseData',
-    },
-    {
-      $project: {
-        _id: '$courseData._id',
-        title: '$courseData.title',
-        instructor: '$courseData.instructor',
-        categoryId: '$courseData.categoryId',
-        price: '$courseData.price',
-        tags: {
-          $filter: {
-            input: '$courseData.tags',
-            as: 'tag',
-            cond: { $ne: ['$$tag.isDeleted', true] },
-          },
-        },
-        startDate: '$courseData.startDate',
-        endDate: '$courseData.endDate',
-        language: '$courseData.language',
-        provider: '$courseData.provider',
-        createdBy: '$courseData.createdBy',
-        durationInWeeks: '$courseData.durationInWeeks',
-        details: '$courseData.details',
-        averageRating: 1,
-        reviewCount: 1,
-      },
-    },
   ]
 
-  const result = await Review.aggregate(aggregationPipeline)
-  //console.log(result)
+  try {
+    const result = await Review.aggregate(aggregationPipeline)
+    //console.log('Intermediate Result:', result)
 
-  // If you want to populate additional fields from 'courses' collection, specify the path and select options
-  const populatedResult = await Review.populate(result, {
-    path: 'createdBy', // Replace 'createdBy' with the actual path you want to populate
-    select: '_id username email role', // Specify the fields to populate
-  })
-  //console.log(populatedResult)
+    if (result.length === 0) {
+      throw new Error('No data found for the best course.')
+    }
 
-  return populatedResult[0]
+    // Find the course by courseId
+    const courseId = result[0]._id
+    const courseData = await Course.findOne({ _id: courseId })
+
+    if (!courseData) {
+      throw new Error('Course not found.')
+    }
+
+    const populatedResult = {
+      _id: courseData._id,
+      title: courseData.title,
+      instructor: courseData.instructor,
+      categoryId: courseData.categoryId,
+      price: courseData.price,
+      tags: courseData.tags,
+      startDate: courseData.startDate,
+      endDate: courseData.endDate,
+      language: courseData.language,
+      provider: courseData.provider,
+      createdBy: courseData.createdBy,
+      durationInWeeks: courseData.durationInWeeks,
+      details: courseData.details,
+      averageRating: result[0].averageRating,
+      reviewCount: result[0].reviewCount,
+    }
+
+    //console.log('Populated Result:', populatedResult)
+
+    return populatedResult
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 }
 
 export const ReviewServices = {
